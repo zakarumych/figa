@@ -2,6 +2,14 @@
 name = "figa-proc"
 version = "0.1.0"
 edition = "2021"
+authors = ["Zakarumych <zaq.dev@icloud.com>"]
+description = "Proc-macro for 'figa' crate"
+license = "MIT OR Apache-2.0"
+repository = "https://gihub.com/zakarumych/figa"
+documentation = "https://docs.rs/figa-proc"
+readme = "../README.md"
+keywords = ["configuration"]
+categories = ["config", "no-std", "no-std::no-alloc"]
 
 [lib]
 proc-macro = true
