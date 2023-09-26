@@ -16,6 +16,9 @@ struct DemoConfig {
     d: Vec<String>,
     #[figa(update)]
     e: BTreeMap<String, ConfigValue>,
+    #[figa(append)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    f: Option<String>,
 }
 
 #[derive(figa::Figa, serde_derive::Deserialize)]
@@ -49,6 +52,8 @@ fn main() {
     let cfg8 = r#"{"a":2,"b":"asd","c":[1,2,3,4,5,6],"d":["qwe","bbb","uio"],"e":{"aaa":{"foo":"pop","bar":"nop"},"ccc":{"foo":"ghj","bar":"xcv"}}}"#;
     let cfg9_update = r#"{"e":{"ccc":{"bar":"zxc"}}}"#;
     let cfg9 = r#"{"a":2,"b":"asd","c":[1,2,3,4,5,6],"d":["qwe","bbb","uio"],"e":{"aaa":{"foo":"pop","bar":"nop"},"ccc":{"foo":"ghj","bar":"xcvzxc"}}}"#;
+    let cfg10_update = r#"{"f":"qwe"}"#;
+    let cfg10 = r#"{"a":2,"b":"asd","c":[1,2,3,4,5,6],"d":["qwe","bbb","uio"],"e":{"aaa":{"foo":"pop","bar":"nop"},"ccc":{"foo":"ghj","bar":"xcvzxc"}},"f":"qwe"}"#;
 
     let mut cfg: DemoConfig = serde_json::from_str(cfg1).unwrap();
 
@@ -106,6 +111,12 @@ fn main() {
         &mut serde_json::Deserializer::from_str(cfg9_update),
     )
     .unwrap();
-
     assert_eq!(serde_json::to_string(&cfg).unwrap(), cfg9);
+
+    figa::Figa::update(
+        &mut cfg,
+        &mut serde_json::Deserializer::from_str(cfg10_update),
+    )
+    .unwrap();
+    assert_eq!(serde_json::to_string(&cfg).unwrap(), cfg10);
 }
