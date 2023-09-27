@@ -1,6 +1,6 @@
 [package]
 name = "figa"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Zakarumych <zaq.dev@icloud.com>"]
 description = "A layered configuration library for Rust"
@@ -15,11 +15,12 @@ categories = ["config", "no-std", "no-std::no-alloc"]
 alloc = ["serde/alloc"]
 std = ["alloc", "serde/std"]
 derive = ["dep:figa-proc"]
-load = ["dep:directories", "dep:toml", "std"]
+load = ["dep:directories", "dep:toml", "std", "dep:denvars"]
 default = ["std"]
 
 [dependencies]
 figa-proc = { version = "=0.1.0", path = "proc", optional = true }
+denvars = { version = "0.1.3", optional = true }
 directories = { version = "5.0", optional = true }
 hashbrown = { version = "0.14", optional = true }
 serde = { version = "1.0", default-features = false }
@@ -33,6 +34,6 @@ serde_json = "1.0"
 
 [[example]]
 name = "demo"
-required-features = ["std", "derive"]
+required-features = ["std", "derive", "load"]
 
 [workspace]

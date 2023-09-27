@@ -54,6 +54,8 @@ fn main() {
     let cfg9 = r#"{"a":2,"b":"asd","c":[1,2,3,4,5,6],"d":["qwe","bbb","uio"],"e":{"aaa":{"foo":"pop","bar":"nop"},"ccc":{"foo":"ghj","bar":"xcvzxc"}}}"#;
     let cfg10_update = r#"{"f":"qwe"}"#;
     let cfg10 = r#"{"a":2,"b":"asd","c":[1,2,3,4,5,6],"d":["qwe","bbb","uio"],"e":{"aaa":{"foo":"pop","bar":"nop"},"ccc":{"foo":"ghj","bar":"xcvzxc"}},"f":"qwe"}"#;
+    std::env::set_var("FIGA_DEMO_D", "y , z, \"q\\x20\"");
+    let cfg11 = r#"{"a":2,"b":"asd","c":[1,2,3,4,5,6],"d":["y","z","q "],"e":{"aaa":{"foo":"pop","bar":"nop"},"ccc":{"foo":"ghj","bar":"xcvzxc"}},"f":"qwe"}"#;
 
     let mut cfg: DemoConfig = serde_json::from_str(cfg1).unwrap();
 
@@ -119,4 +121,11 @@ fn main() {
     )
     .unwrap();
     assert_eq!(serde_json::to_string(&cfg).unwrap(), cfg10);
+
+    figa::Figa::update(
+        &mut cfg,
+        denvars::Deserializer::from_prefixed_env_vars("FIGA_DEMO_"),
+    )
+    .unwrap();
+    assert_eq!(serde_json::to_string(&cfg).unwrap(), cfg11);
 }

@@ -25,8 +25,24 @@ where
         .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))
 }
 
+/// Updates configuration from environment variables.
+pub fn update_config_from_env<T>(config: &mut T, prefix: &str) -> io::Result<()>
+where
+    T: Figa,
+{
+    config
+        .update(denvars::Deserializer::from_prefixed_env_vars(prefix))
+        .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))
+}
+
 /// Updates configuration from predefined directories and current working directory.
-pub fn update_config<T>(config: &mut T, dirs: &ProjectDirs, name: &str) -> io::Result<()>
+/// And updates from environment variables if `use_env` is `true`.
+pub fn update_config<T>(
+    config: &mut T,
+    name: &str,
+    dirs: &ProjectDirs,
+    use_env: bool,
+) -> io::Result<()>
 where
     T: Figa,
 {
@@ -35,16 +51,20 @@ where
     if let Ok(cd) = std::env::current_dir() {
         update_from_path(config, cd.join(name))?;
     }
+    if use_env {
+        update_config_from_env(config, &name.to_uppercase())?;
+    }
 
     Ok(())
 }
 
 /// Loads configuration from predefined directories and current working directory.
-pub fn load_config<T>(dirs: &ProjectDirs, name: &str) -> io::Result<T>
+/// And updates from environment variables if `use_env` is `true`.
+pub fn load_config<T>(name: &str, dirs: &ProjectDirs, use_env: bool) -> io::Result<T>
 where
     T: Figa + Default,
 {
     let mut config = T::default();
-    update_config(&mut config, dirs, name)?;
+    update_config(&mut config, name, dirs, use_env)?;
     Ok(config)
 }
